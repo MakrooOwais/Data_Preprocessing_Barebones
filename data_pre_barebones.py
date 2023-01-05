@@ -34,7 +34,7 @@ for col in range(1, len(X[0])):
     n = 0
     for row in X:
         try:
-            sum += int(row[col])
+            sum += float(row[col])
             n = n + 1
         except ValueError:
             continue
@@ -72,18 +72,58 @@ X_train, Y_train = [], []
 init_len = len(X)
 while len(X) > 0.8 * (init_len):
     index = random.randint(0, len(X))
-    X_train.append(X.pop(index))
-    Y_train.append(Y_one_hot.pop(index))
+    try:
+        X_train.append(X.pop(index))
+        Y_train.append(Y_one_hot.pop(index))
+    except:
+        continue
 
 print(init_len)
-print(len(X_train))
+print_2d_list(X_train)
 
 
 # from sklearn.preprocessing import StandardScaler
 
 # sc = StandardScaler()
 # X_train[:, 3:] = sc.fit_transform(X_train[:, 3:])
-# Feature scaling is used to get all the numerical variables into same range so that it takes less time to train the model.
+# Feature scaling is used to get all the numerical variables floato same range so that it takes less time to train the model.
 # # Standard Scaling makes the range (-3, 3)
 # # Normalized Scaling makes the range (0, 1)
 # X_test[:, 3:] = sc.transform(X_test[:, 3:])
+
+min_index = []
+max_index = []
+
+for col in range(len(X_train[0])):
+    min_i = 0
+    for row in range(len(X_train)):
+        if float(X_train[row][col]) < float(X_train[min_i][col]):
+            min_i = row
+    min_index.append(min_i)
+
+print(min_index)
+
+for col in range(len(X_train[0])):
+    max_i = 0
+    for row in range(len(X_train)):
+        if float(X_train[row][col]) > float(X_train[max_i][col]):
+            max_i = row
+    max_index.append(max_i)
+
+print(max_index)
+
+for row in range(len(X_train)):
+    X_train[row][0] = (float(X_train[row][0]) - float(X_train[min_index[0]][0])) / (
+        float(X_train[max_index[0]][0]) - float(X_train[min_index[0]][0])
+    )
+    X_train[row][1] = (float(X_train[row][1]) - float(X_train[min_index[1]][1])) / (
+        float(X_train[max_index[1]][1]) - float(X_train[min_index[1]][1])
+    )
+    X_train[row][2] = (float(X_train[row][2]) - float(X_train[min_index[2]][2])) / (
+        float(X_train[max_index[2]][2]) - float(X_train[min_index[2]][2])
+    )
+    X_train[row][3] = (float(X_train[row][3]) - float(X_train[min_index[3]][3])) / (
+        float(X_train[max_index[3]][3]) - float(X_train[min_index[3]][3])
+    )
+
+print_2d_list(X_train)
